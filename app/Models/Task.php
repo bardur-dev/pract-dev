@@ -17,9 +17,6 @@ class Task extends Model
         'status',
     ];
 
-    protected $casts = [
-        'status' => 'string',
-    ];
 
 
     public function user(): BelongsTo
