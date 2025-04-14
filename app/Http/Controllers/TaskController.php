@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\TaskStatus;
 use App\Http\Requests\StoreOrCreateRequests;
+use App\Http\Requests\UpdateTaskStatusRequest;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -11,27 +14,42 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class TaskController extends Controller
 {
     use AuthorizesRequests;
+    protected $perPage = 4;
     public function index()
     {
-        $tasks = Auth::user()->tasks()->latest()->get();
-        return view('tasks.index', compact('tasks'));
+        $tasks = auth()->user()->tasks()->latest()->paginate($this->perPage);
+
+        return view('tasks.index', [
+            'tasks' => $tasks,
+            'taskToEdit' => null,
+        ]);
     }
 
-    public function store(StoreOrCreateRequests $request)
+    public function create()
     {
-        Task::create([
+        return view('tasks.create');
+    }
+
+    public function store(StoreOrCreateRequests $request, User $user)
+    {
+        $request->user()->tasks()->create([
             'name' => $request->validated()['name'],
-            'user_id' => Auth::id(),
-            'status' => 'pending'
+            'status' => 'pending',
         ]);
 
         return redirect()->route('tasks.index')
             ->with('success', 'Задача добавлена');
     }
 
+    public function edit(Task $task)
+    {
+        return view('tasks.edit', compact('task'));
+    }
+
     public function update(StoreOrCreateRequests $request, Task $task)
     {
         $task->update($request->validated());
+
         return redirect()->route('tasks.index')
             ->with('success', 'Задача обновлена');
     }
@@ -39,22 +57,17 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         $task->delete();
+
         return redirect()->route('tasks.index')
             ->with('success', 'Задача удалена');
     }
 
-    public function toggleStatus(Request $request, Task $task)
+    public function toggleStatus(UpdateTaskStatusRequest $request, Task $task)
     {
-        if ($task->user_id !== auth()->id()) {
-            return back()->withErrors('У вас нет прав для изменения этой задачи.');
-        }
 
-        $request->validate([
-            'status' => 'required|in:pending,in_progress,completed',
+        $task->update([
+            'status' => TaskStatus::from($request->status)
         ]);
-
-
-        $task->update(['status' => $request->status]);
 
         return back()->with('success', 'Статус задачи обновлен');
     }
