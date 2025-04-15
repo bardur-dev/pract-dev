@@ -11,9 +11,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Task extends Model
 {
     use HasFactory;
+
     protected $casts = [
         'status' => TaskStatus::class,
     ];
+
     protected $fillable = [
         'name',
         'user_id',
