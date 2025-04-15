@@ -23,6 +23,7 @@
                                    class="w-full px-4 py-2 border rounded focus:ring-blue-500 focus:border-blue-500"
                                    placeholder="Введите название задачи">
                         </div>
+                        <input type="hidden" name="status" value="pending">
                         <div class="flex items-center gap-2">
                             <button type="submit"
                                     class="px-4 py-2 bg-blue-500 text-black rounded hover:bg-blue-600">

@@ -44,7 +44,7 @@ class TaskController extends Controller
 
         $request->user()->tasks()->create([
             'name' => $validated['name'],
-            'status' => $validated['status'] ?? 'pending',
+            'status' => TaskStatus::from($validated['status']),
         ]);
 
         return redirect()->route('tasks.index')

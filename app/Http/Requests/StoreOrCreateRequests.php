@@ -17,7 +17,7 @@ class StoreOrCreateRequests extends FormRequest
                 'max:255',
             ],
             'status' => [
-                'nullable',
+                'required',
                 'string',
                 Rule::in(TaskStatus::values()),
             ],
@@ -30,6 +30,7 @@ class StoreOrCreateRequests extends FormRequest
             'name.required' => 'Название задачи обязательно',
             'name.min' => 'Минимальная длина названия - 3 символа',
             'name.max' => 'Максимальная длина названия - 255 символов',
+            'status.required' => 'Статус задачи обязателен',
             'status.in' => 'Выбран недопустимый статус задачи',
         ];
     }
