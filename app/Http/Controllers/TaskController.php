@@ -17,11 +17,24 @@ class TaskController extends Controller
 
     protected $perPage = 4;
 
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('viewAny', Task::class);
 
-        $tasks = auth()->user()->tasks()->latest()->paginate($this->perPage);
+        $tasks = auth()->user()->tasks()->latest();
+
+        if ($search = $request->query('search')) {
+            $tasks->where('name', 'like', "%{$search}%");
+        }
+
+        if ($status = $request->query('status')) {
+            $statusEnum = TaskStatus::tryFrom($status);
+            if ($statusEnum) {
+                $tasks->where('status', $statusEnum);
+            }
+        }
+
+        $tasks = $tasks->paginate($this->perPage);
 
         return view('tasks.index', [
             'tasks' => $tasks,
