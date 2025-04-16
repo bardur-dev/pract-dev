@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DTO\TaskFilterDTO;
 use App\Enums\TaskStatus;
 use App\Http\Requests\StoreOrCreateRequests;
 use App\Http\Requests\TaskFilterRequest;
@@ -22,12 +23,11 @@ class TaskController extends Controller
     {
         $this->authorize('viewAny', Task::class);
 
-        $search = $request->input('search');
-        $status = $request->input('status');
+        $filterDTO = TaskFilterDTO::fromArray($request->validated());
 
         $tasks = auth()->user()
             ->tasks()
-            ->filter($search, $status)
+            ->filter($filterDTO)
             ->latest()
             ->paginate($this->perPage);
 

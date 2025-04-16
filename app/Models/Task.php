@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\DTO\TaskFilterDTO;
 use App\Enums\TaskStatus;
-use App\Models\Scopes\TaskScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,9 +24,17 @@ class Task extends Model
         'status',
     ];
 
-    public function scopeFilter(Builder $query, ?string $search, ?string $status): Builder
+    public function scopeFilter(Builder $query, TaskFilterDTO $filterDTO): Builder
     {
-        return $query->withGlobalScope('filter', new TaskScope($search, $status));
+        if ($filterDTO->search) {
+            $query->where('name', 'like', "%{$filterDTO->search}%");
+        }
+
+        if ($filterDTO->status && TaskStatus::tryFrom($filterDTO->status)) {
+            $query->where('status', $filterDTO->status);
+        }
+
+        return $query;
     }
 
     public function user(): BelongsTo
