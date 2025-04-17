@@ -26,15 +26,15 @@ class Task extends Model
 
     public function scopeFilter(Builder $query, TaskFilterDTO $filterDTO): Builder
     {
-        if ($filterDTO->search) {
-            $query->where('name', 'like', "%{$filterDTO->search}%");
-        }
-
-        if ($filterDTO->status && TaskStatus::tryFrom($filterDTO->status)) {
-            $query->where('status', $filterDTO->status);
-        }
-
-        return $query;
+        return $query
+            ->when($filterDTO->search, function ($q, $search) {
+                $q->where('name', 'like', "%{$search}%");
+            })
+            ->when($filterDTO->status, function ($q, $status) {
+                if (TaskStatus::tryFrom($status)) {
+                    $q->where('status', $status);
+                }
+            });
     }
 
     public function user(): BelongsTo
