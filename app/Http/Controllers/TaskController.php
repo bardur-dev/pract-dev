@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\DTO\TaskFilterDTO;
 use App\Enums\TaskStatus;
 use App\Http\Requests\StoreOrCreateRequests;
+use App\Http\Requests\TaskFilterRequest;
 use App\Http\Requests\UpdateTaskStatusRequest;
 use App\Models\Task;
 use App\Models\User;
@@ -17,11 +19,17 @@ class TaskController extends Controller
 
     protected $perPage = 4;
 
-    public function index()
+    public function index(TaskFilterRequest $request)
     {
         $this->authorize('viewAny', Task::class);
 
-        $tasks = auth()->user()->tasks()->latest()->paginate($this->perPage);
+        $filterDTO = TaskFilterDTO::fromArray($request->validated());
+
+        $tasks = auth()->user()
+            ->tasks()
+            ->filter($filterDTO)
+            ->latest()
+            ->paginate($this->perPage);
 
         return view('tasks.index', [
             'tasks' => $tasks,

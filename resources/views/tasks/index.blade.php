@@ -22,6 +22,38 @@
                 </div>
             @endif
 
+                <form method="GET" action="{{ route('tasks.index') }}" class="mb-6">
+                    <div class="flex gap-4 items-center">
+                        <input type="text"
+                               name="search"
+                               placeholder="Поиск..."
+                               value="{{ request('search') }}"
+                               class="px-4 py-2 border rounded focus:ring-blue-500 focus:border-blue-500 flex-1">
+
+                        <select name="status" class="px-4 py-2 border rounded focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Все статусы</option>
+                            @foreach(App\Enums\TaskStatus::cases() as $statusOption)
+                                <option value="{{ $statusOption->value }}"
+                                    {{ request('status') == $statusOption->value ? 'selected' : '' }}>
+                                    {{ $statusOption->label() }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <button type="submit" class="px-4 py-2 border rounded text-gray-700 hover:bg-gray-100">
+                            Применить
+                        </button>
+
+                        <a href="{{ route('tasks.index') }}"
+                           class="px-4 py-2 border rounded text-gray-700 hover:bg-gray-100">
+                            Сбросить
+                        </a>
+                    </div>
+                </form>
+
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 bg-white border-b border-gray-200">
+
             @if($errors->any())
                 <div class="mb-4 p-3 bg-red-100 text-red-700 rounded">
                     <ul>
