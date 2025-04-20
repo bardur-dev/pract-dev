@@ -23,13 +23,14 @@ class TaskController extends Controller
     {
         $this->authorize('viewAny', Task::class);
 
-        $filterDTO = TaskFilterDTO::fromArray($request->validated());
+        $filterDTO = TaskFilterDTO::fromArray(array_merge(
+            $request->validated(),
+            ['user_id' => auth()->user()->isAdmin() ? $request->user_id : auth()->id()]
+        ));
 
-        $tasks = auth()->user()
-            ->tasks()
-            ->filter($filterDTO)
-            ->latest()
-            ->paginate($this->perPage);
+        $query = Task::filter($filterDTO);
+
+        $tasks = $query->latest()->paginate($this->perPage);
 
         return view('tasks.index', [
             'tasks' => $tasks,

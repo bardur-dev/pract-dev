@@ -14,6 +14,7 @@
             </div>
         </div>
     </x-slot>
+
     <div class="py-6">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
             @if(session('success'))
@@ -22,49 +23,57 @@
                 </div>
             @endif
 
-                <form method="GET" action="{{ route('tasks.index') }}" class="mb-6">
-                    <div class="flex gap-4 items-center">
-                        <input type="text"
-                               name="search"
-                               placeholder="Поиск..."
-                               value="{{ request('search') }}"
-                               class="px-4 py-2 border rounded focus:ring-blue-500 focus:border-blue-500 flex-1">
+            <form method="GET" action="{{ route('tasks.index') }}" class="mb-6">
+                <div class="flex gap-4 items-center">
+                    <input type="text"
+                           name="search"
+                           placeholder="Поиск..."
+                           value="{{ request('search') }}"
+                           class="px-4 py-2 border rounded focus:ring-blue-500 focus:border-blue-500 flex-1">
 
-                        <select name="status" class="px-4 py-2 border rounded focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Все статусы</option>
-                            @foreach(App\Enums\TaskStatus::cases() as $statusOption)
-                                <option value="{{ $statusOption->value }}"
-                                    {{ request('status') == $statusOption->value ? 'selected' : '' }}>
-                                    {{ $statusOption->label() }}
+                    <select name="status" class="px-4 py-2 border rounded focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Все статусы</option>
+                        @foreach(App\Enums\TaskStatus::cases() as $statusOption)
+                            <option value="{{ $statusOption->value }}"
+                                {{ request('status') == $statusOption->value ? 'selected' : '' }}>
+                                {{ $statusOption->label() }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    @if(auth()->user()->isAdmin())
+                        <select name="user_id" class="px-4 py-2 border rounded focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Все пользователи</option>
+                            @foreach(App\Models\User::all() as $user)
+                                <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
+                                    {{ $user->name }}
                                 </option>
                             @endforeach
                         </select>
+                    @endif
 
-                        <button type="submit" class="px-4 py-2 border rounded text-gray-700 hover:bg-gray-100">
-                            Применить
-                        </button>
-
-                        <a href="{{ route('tasks.index') }}"
-                           class="px-4 py-2 border rounded text-gray-700 hover:bg-gray-100">
-                            Сбросить
-                        </a>
-                    </div>
-                </form>
-
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 bg-white border-b border-gray-200">
-
-            @if($errors->any())
-                <div class="mb-4 p-3 bg-red-100 text-red-700 rounded">
-                    <ul>
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+                    <button type="submit" class="px-4 py-2 border rounded text-gray-700 hover:bg-gray-100">
+                        Применить
+                    </button>
+                    <a href="{{ route('tasks.index') }}"
+                       class="px-4 py-2 border rounded text-gray-700 hover:bg-gray-100">
+                        Сбросить
+                    </a>
                 </div>
-            @endif
+            </form>
+
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
+                    @if($errors->any())
+                        <div class="mb-4 p-3 bg-red-100 text-red-700 rounded">
+                            <ul>
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     @if($tasks->count())
                         <div class="space-y-3">
                             @foreach($tasks as $task)

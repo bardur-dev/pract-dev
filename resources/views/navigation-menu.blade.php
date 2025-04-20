@@ -18,6 +18,13 @@
                     <x-nav-link :href="route('tasks.index')" :active="request()->routeIs('tasks.*')">
                         {{ __('Задачи') }}
                     </x-nav-link>
+                    @if(auth()->check() && auth()->user()->isAdmin())
+                        <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                            <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                                {{ __('Пользователи') }}
+                            </x-nav-link>
+                        </div>
+                    @endif
                 </div>
             </div>
 

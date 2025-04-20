@@ -11,6 +11,7 @@ class TaskFilterRequest extends FormRequest
         return [
             'search' => ['nullable', 'string', 'max:255'],
             'status' => ['nullable', 'string', 'in:' . implode(',', TaskStatus::values())],
+            'user_id' => ['nullable', 'integer', 'exists:users,id']
         ];
     }
 
@@ -18,6 +19,7 @@ class TaskFilterRequest extends FormRequest
     {
         return [
             'status.in' => 'Выбранный статус недействителен.',
+            'user_id.exists' => 'Выбранный пользователь не существует.'
         ];
     }
 }
