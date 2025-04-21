@@ -41,17 +41,6 @@
                         @endforeach
                     </select>
 
-                    @if(auth()->user()->isAdmin())
-                        <select name="user_id" class="px-4 py-2 border rounded focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Все пользователи</option>
-                            @foreach(App\Models\User::all() as $user)
-                                <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
-                                    {{ $user->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    @endif
-
                     <button type="submit" class="px-4 py-2 border rounded text-gray-700 hover:bg-gray-100">
                         Применить
                     </button>

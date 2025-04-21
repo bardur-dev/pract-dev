@@ -23,10 +23,7 @@ class TaskController extends Controller
     {
         $this->authorize('viewAny', Task::class);
 
-        $filterDTO = TaskFilterDTO::fromArray(array_merge(
-            $request->validated(),
-            ['user_id' => auth()->user()->isAdmin() ? $request->user_id : auth()->id()]
-        ));
+        $filterDTO = TaskFilterDTO::fromArray($request->validated());
 
         $query = Task::filter($filterDTO);
 

@@ -28,11 +28,6 @@ Route::middleware([
         Route::post('/{task}/toggle', [TaskController::class, 'toggleStatus'])->name('toggle');
     });
 
-    Route::prefix('users')->name('users.')->group(function () {
-        Route::get('/', [UserController::class, 'index'])->name('index');
-        Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
-        Route::put('/{user}', [UserController::class, 'update'])->name('update');
-        Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
-        Route::get('/{user}/tasks', [UserController::class, 'tasks'])->name('tasks');
-    });
+    Route::resource('users', UserController::class)->names('users');
+    Route::get('/users/{user}/tasks', [UserController::class, 'tasks'])->name('users.tasks');
 });
