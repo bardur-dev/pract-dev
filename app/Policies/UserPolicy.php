@@ -2,26 +2,26 @@
 
 namespace App\Policies;
 
-use App\Models\Task;
 use App\Models\User;
+use App\Enums\Role;
 use Illuminate\Auth\Access\Response;
 
-class TaskPolicy
+class UserPolicy
 {
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->isAdmin();
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Task $task): bool
+    public function view(User $user, User $model): bool
     {
-        return $user->isAdmin() || $user->id === $task->user_id;
+        return $user->isAdmin() || $user->id === $model->id;
     }
 
     /**
@@ -29,37 +29,37 @@ class TaskPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return false;
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Task $task): bool
+    public function update(User $user, User $model): bool
     {
-        return $user->isAdmin() || $user->id === $task->user_id;
+        return $user->isAdmin();
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Task $task): bool
+    public function delete(User $user, User $model): bool
     {
-        return $user->isAdmin() || $user->id === $task->user_id;
+        return $user->isAdmin() && $user->id !== $model->id;
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Task $task): bool
+    public function restore(User $user, User $model): bool
     {
-        return $user->isAdmin() || $user->id === $task->user_id;
+        return false;
     }
 
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Task $task): bool
+    public function forceDelete(User $user, User $model): bool
     {
         return false;
     }

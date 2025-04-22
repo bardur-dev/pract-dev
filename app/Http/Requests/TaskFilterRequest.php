@@ -10,14 +10,14 @@ class TaskFilterRequest extends FormRequest
     {
         return [
             'search' => ['nullable', 'string', 'max:255'],
-            'status' => ['nullable', 'string', 'in:' . implode(',', TaskStatus::values())],
+            'status' => ['nullable', 'string', 'in:' . implode(',', TaskStatus::values())]
         ];
     }
 
     public function messages(): array
     {
         return [
-            'status.in' => 'Выбранный статус недействителен.',
+            'status.in' => 'Выбранный статус недействителен.'
         ];
     }
 }
