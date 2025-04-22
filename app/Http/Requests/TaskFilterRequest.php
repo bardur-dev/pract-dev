@@ -10,16 +10,14 @@ class TaskFilterRequest extends FormRequest
     {
         return [
             'search' => ['nullable', 'string', 'max:255'],
-            'status' => ['nullable', 'string', 'in:' . implode(',', TaskStatus::values())],
-            'user_id' => ['nullable', 'integer', 'exists:users,id']
+            'status' => ['nullable', 'string', 'in:' . implode(',', TaskStatus::values())]
         ];
     }
 
     public function messages(): array
     {
         return [
-            'status.in' => 'Выбранный статус недействителен.',
-            'user_id.exists' => 'Выбранный пользователь не существует.'
+            'status.in' => 'Выбранный статус недействителен.'
         ];
     }
 }

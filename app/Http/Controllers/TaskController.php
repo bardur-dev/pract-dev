@@ -25,9 +25,11 @@ class TaskController extends Controller
 
         $filterDTO = TaskFilterDTO::fromArray($request->validated());
 
-        $query = Task::filter($filterDTO);
-
-        $tasks = $query->latest()->paginate($this->perPage);
+        $tasks = auth()->user()
+            ->tasks()
+            ->filter($filterDTO)
+            ->latest()
+            ->paginate($this->perPage);
 
         return view('tasks.index', [
             'tasks' => $tasks,
