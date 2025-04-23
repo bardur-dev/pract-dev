@@ -26,6 +26,8 @@ Route::middleware([
         Route::put('/{task}', [TaskController::class, 'update'])->name('update');
         Route::delete('/{task}', [TaskController::class, 'destroy'])->name('destroy');
         Route::post('/{task}/toggle', [TaskController::class, 'toggleStatus'])->name('toggle');
+
+        Route::get('/export', [TaskController::class, 'export'])->name('export');
     });
 
     Route::resource('users', UserController::class)->names('users');

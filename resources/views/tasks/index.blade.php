@@ -11,6 +11,9 @@
                 <a href="{{ route('dashboard') }}" class="text-blue-500 hover:text-blue-700">
                     Назад в Dashboard
                 </a>
+                <a href="{{ route('tasks.export') }}" class="text-green-500 hover:text-green-700">
+                    Выгрузить в Excel
+                </a>
             </div>
         </div>
     </x-slot>
