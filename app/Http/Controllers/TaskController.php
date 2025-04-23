@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DTO\TaskFilterDTO;
 use App\Enums\TaskStatus;
+use App\Exports\TaskExport;
 use App\Http\Requests\StoreOrCreateRequests;
 use App\Http\Requests\TaskFilterRequest;
 use App\Http\Requests\UpdateTaskStatusRequest;
@@ -35,6 +36,15 @@ class TaskController extends Controller
             'tasks' => $tasks,
             'taskToEdit' => null,
         ]);
+    }
+
+    public function export()
+    {
+        $this->authorize('viewAny', Task::class);
+
+        $tasks = Auth::user()->tasks;
+
+        return (new TaskExport($tasks))->download('tasks.xlsx');
     }
 
     public function create()
