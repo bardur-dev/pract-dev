@@ -17,7 +17,7 @@ class TaskExport
         $this->tasks = $tasks;
     }
 
-    public function download(string $fileName = 'tasks.xlsx'): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    public function saveToFile(string $filePath): bool
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -39,9 +39,8 @@ class TaskExport
         }
 
         $writer = new Xlsx($spreadsheet);
-        $tempFilePath = tempnam(sys_get_temp_dir(), 'excel');
-        $writer->save($tempFilePath);
+        $writer->save($filePath);
 
-        return response()->download($tempFilePath, $fileName)->deleteFileAfterSend();
+        return file_exists($filePath);
     }
 }

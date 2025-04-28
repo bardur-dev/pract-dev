@@ -8,6 +8,7 @@ use App\Exports\TaskExport;
 use App\Http\Requests\StoreOrCreateRequests;
 use App\Http\Requests\TaskFilterRequest;
 use App\Http\Requests\UpdateTaskStatusRequest;
+use App\Jobs\SendTaskExportEmail;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -42,9 +43,9 @@ class TaskController extends Controller
     {
         $this->authorize('viewAny', Task::class);
 
-        $tasks = Auth::user()->tasks;
+        SendTaskExportEmail::dispatch(Auth::user());
 
-        return (new TaskExport($tasks))->download('tasks.xlsx');
+        return back()->with('success', 'Выгрузка начата. Файл будет отправлен на вашу почту.');
     }
 
     public function create()
