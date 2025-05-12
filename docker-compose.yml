@@ -53,18 +53,18 @@ services:
           - laravel_network
 
     # pgAdmin Service
-  pgadmin:
-      image: dpage/pgadmin4
-      container_name: pgadmin
-      environment:
-          PGADMIN_DEFAULT_EMAIL: admin@example.com
-          PGADMIN_DEFAULT_PASSWORD: secret
-      ports:
-          - "5050:80"
-      depends_on:
-          - postgres
-      networks:
-          - laravel_network
+#  pgadmin:
+#      image: dpage/pgadmin4
+#      container_name: pgadmin
+#      environment:
+#          PGADMIN_DEFAULT_EMAIL: admin@example.com
+#          PGADMIN_DEFAULT_PASSWORD: secret
+#      ports:
+#          - "5050:80"
+#      depends_on:
+#          - postgres
+#      networks:
+#          - laravel_network
 
   # Composer Service
   composer:
@@ -78,8 +78,26 @@ services:
     networks:
       - laravel_network
 
+  elasticsearch:
+    image: elasticsearch:8.8.0
+    ports:
+        - "9200:9200"
+        - "9300:9300"
+    environment:
+        - xpack.security.enabled=false
+        - discovery.type=single-node
+    deploy:
+        resources:
+            limits:
+                cpus: "3.00"
+                memory: 3G
+    networks:
+        - laravel_network
+
 volumes:
   postgres_data:
+    driver: local
+  elastic_data:
     driver: local
 
 networks:
