@@ -27,9 +27,7 @@ class TaskController extends Controller
 
         $filterDTO = TaskFilterDTO::fromArray($request->validated());
 
-        $tasks = auth()->user()
-            ->tasks()
-            ->filter($filterDTO)
+        $tasks = Task::filter($filterDTO)
             ->latest()
             ->paginate($this->perPage);
 
