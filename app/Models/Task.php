@@ -50,27 +50,29 @@ class Task extends Model
 
     public function scopeFilter(Builder $query, TaskFilterDTO $filterDTO): Builder
     {
-        $query->where('user_id', auth()->id());
-
-        if (!$filterDTO->search && !$filterDTO->status) {
-            return $query;
-        }
-
         $boolQuery = Query::bool()
             ->must(Query::term()->field('user_id')->value(auth()->id()));
 
-        if ($filterDTO->search) {
-            $searchTerm = '*' . strtolower($filterDTO->search) . '*';
-            $boolQuery->must(Query::wildcard()
-                ->field('name')
-                ->value($searchTerm));
-        }
+        $boolQuery->when($filterDTO->search, function ($query) use ($filterDTO) {
+            $searchTerm = strtolower($filterDTO->search);
+            return $query->must(Query::bool()
+                ->should(Query::wildcard()
+                    ->field('name')
+                    ->value("*{$searchTerm}*"))
+                ->should(Query::match()
+                    ->field('name')
+                    ->query($searchTerm)
+                    ->fuzziness('AUTO'))
+                ->minimumShouldMatch(1));
+        });
 
-        if ($filterDTO->status && TaskStatus::tryFrom($filterDTO->status)) {
-            $boolQuery->filter(Query::term()
-                ->field('status')
-                ->value($filterDTO->status));
-        }
+        $boolQuery->when($filterDTO->status && TaskStatus::tryFrom($filterDTO->status),
+            function ($query) use ($filterDTO) {
+                return $query->filter(Query::term()
+                    ->field('status')
+                    ->value($filterDTO->status));
+            }
+        );
 
         $ids = $this->searchQuery($boolQuery)
             ->execute()
@@ -78,7 +80,7 @@ class Task extends Model
             ->pluck('id')
             ->all();
 
-        return $query->whereIn('id', $ids);
+        return $query->whereIn('id', $ids ?: [null]);
     }
 
     public function user(): BelongsTo
